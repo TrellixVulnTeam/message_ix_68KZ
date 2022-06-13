@@ -601,14 +601,14 @@ $macro COMMODITY_BALANCE(node,commodity,level,year,time) (                      
         * CAP_NEW(location,tec,year) )                                                                                 \
 * commodity input and output associated with retirement of technology capacity (via differentials of capacity of successive periods)
 * for first model period (differential with historical remaining capacity)
-  + SUM( (location,tec,vintage,year2)$( inv_tec(tec) AND map_tec_lifetime_extended(location,tec,vintage,year2)                  \
-           AND NOT map_tec_lifetime_extended(location,tec,vintage,year) AND first_period(year) AND seq_period(year2,year) ),                                                                 \ 
+  + SUM( (location,tec,vintage,year_all2)$( inv_tec(tec) AND map_tec_lifetime_extended(location,tec,vintage,year_all2)                  \
+           AND NOT map_tec_lifetime_extended(location,tec,vintage,year) AND first_period(year) AND seq_period(year_all2,year) ),                                                                 \
 * output by all new capacity of technologies located at 'location' sending to 'node' and 'time' distributed over years of periods
         output_cap_ret(location,tec,vintage,node,commodity,level,time)                                                 \
-        *  (historical_new_capacity(node,tec,vintage) * remaining_capacity_extended(node,tec,vintage,year2))            \
+        *  (historical_new_capacity(node,tec,vintage) * remaining_capacity_extended(node,tec,vintage,year_all2))            \
 * input by all new capacity of technologies located at 'location' taking from 'node' and 'time' distributed over years of periods
         - input_cap_ret(location,tec,vintage,node,commodity,level,time)                                                \
-        *  (historical_new_capacity(node,tec,vintage) * remaining_capacity_extended(node,tec,vintage,year2))) \
+        *  (historical_new_capacity(node,tec,vintage) * remaining_capacity_extended(node,tec,vintage,year_all2))) \
 * for other model periods (differential with installed capacity of preceding period)
   + SUM( (location,tec,vintage,year2)$( inv_tec(tec) AND map_tec_lifetime(location,tec,vintage,year2)                  \
             AND NOT first_period(year) AND seq_period(year2,year) ),                                                   \
@@ -809,8 +809,8 @@ CAPACITY_MAINTENANCE(node,inv_tec,vintage,year)$( map_tec_lifetime(node,inv_tec,
 *
 * Equation CAPACITY_MAINTENANCE2
 * """"""""""""""""""""""""""""""
-* This constraint ensures that the capacity is not preserved after the technical lifetime of a technology. 
-* 
+* This constraint ensures that the capacity is not preserved after the technical lifetime of a technology.
+*
 *   .. math::
 *      CAP_{n,t,y^V,y} =
 *          0 \\
@@ -1657,12 +1657,12 @@ NEW_CAPACITY_CONSTRAINT_UP(node,inv_tec,year)$( map_tec(node,inv_tec,year)
 *   .. math::
 *      CAP\_NEW\_UP_{n,t,y} \leq \sum_{y-1} CAP\_NEW_{n^L,t,y-1} & \text{if } y \neq 'first\_period' \\
 *                                + \sum_{y-1} historical\_new\_capacity_{n^L,t,y-1} & \text{if } y = 'first\_period' \\
-*                           \quad \forall \ t \ \in \ T^{INV}   
+*                           \quad \forall \ t \ \in \ T^{INV}
 *
 ***
 NEW_CAPACITY_SOFT_CONSTRAINT_UP(node,inv_tec,year)$( soft_new_capacity_up(node,inv_tec,year) )..
     CAP_NEW_UP(node,inv_tec,year) =L=
-        SUM(year2$( seq_period(year2,year) ), 
+        SUM(year2$( seq_period(year2,year) ),
             CAP_NEW(node,inv_tec,year2)) $ (NOT first_period(year))
       + SUM(year_all2$( seq_period(year_all2,year) ),
             historical_new_capacity(node,inv_tec,year_all2)) $ first_period(year)
@@ -1721,14 +1721,14 @@ NEW_CAPACITY_CONSTRAINT_LO(node,inv_tec,year)$( map_tec(node,inv_tec,year)
 *   .. math::
 *      CAP\_NEW\_LO_{n,t,y} \leq \sum_{y-1} CAP\_NEW_{n^L,t,y-1} & \text{if } y \neq 'first\_period' \\
 *                                + \sum_{y-1} historical\_new\_capacity_{n^L,t,y-1} & \text{if } y = 'first\_period' \\
-*                           \quad \forall \ t \ \in \ T^{INV}  
+*                           \quad \forall \ t \ \in \ T^{INV}
 *
 ***
 NEW_CAPACITY_SOFT_CONSTRAINT_LO(node,inv_tec,year)$( soft_new_capacity_lo(node,inv_tec,year) )..
     CAP_NEW_LO(node,inv_tec,year) =L=
         SUM(year2$( seq_period(year2,year) ),
             CAP_NEW(node,inv_tec,year2) ) $ (NOT first_period(year))
-      + SUM(year_all2$( seq_period(year_all2,year) ), 
+      + SUM(year_all2$( seq_period(year_all2,year) ),
             historical_new_capacity(node,inv_tec,year_all2) ) $ first_period(year)
 ;
 
@@ -1789,7 +1789,7 @@ ACTIVITY_CONSTRAINT_UP(node,tec,year,time)$( map_tec_time(node,tec,year,time)
 *   .. math::
 *      ACT\_UP_{n,t,y,h} \leq \sum_{y^V \leq y,m,y-1} ACT_{n^L,t,y^V,y-1,m,h} & \text{if } y \neq 'first\_period' \\
 *                             + \sum_{m,y-1} historical\_activity_{n^L,t,y-1,m,h} & \text{if } y = 'first\_period'
-*      
+*
 *
 ***
 ACTIVITY_SOFT_CONSTRAINT_UP(node,tec,year,time)$( soft_activity_up(node,tec,year,time) )..
