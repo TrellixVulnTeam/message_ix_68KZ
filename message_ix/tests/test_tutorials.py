@@ -32,7 +32,11 @@ mark1 = pytest.mark.xfail(
 # 3. Dictionary with extra keyword arguments to run_notebook().
 tutorials: List[Tuple] = [
     # IPython kernel
-    (("westeros", "westeros_baseline"), [("solve-objective-value", 173795.09375)], {},),
+    (
+        ("westeros", "westeros_baseline"),
+        [("solve-objective-value", 173795.09375)],
+        {},
+    ),
     # NB could also check objective function values in the following tutorials; however,
     #    better to test features directly (not via Jupyter/IPython)
     (("westeros", "westeros_baseline_using_xlsx_import_part1"), [], {}),
@@ -49,7 +53,11 @@ tutorials: List[Tuple] = [
     # NB this is the same value as in test_reporter()
     (("westeros", "westeros_report"), [("len-rep-graph", 13712)], {}),
     ((AT, "austria"), [("solve-objective-value", 206321.90625)], {}),
-    ((AT, "austria_single_policy"), [("solve-objective-value", 815183232.0)], {},),
+    (
+        (AT, "austria_single_policy"),
+        [("solve-objective-value", 815183232.0)],
+        {},
+    ),
     ((AT, "austria_multiple_policies"), [], {}),
     ((AT, "austria_multiple_policies-answers"), [], {}),
     ((AT, "austria_load_scenario"), [], {}),
